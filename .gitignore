@@ -2,6 +2,5 @@
 .venv
 
 # private
-scratch
 stuff
 *.txt
