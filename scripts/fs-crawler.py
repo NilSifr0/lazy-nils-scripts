@@ -1,4 +1,6 @@
 # creates a file structure of children from current directory
+# from this -> tree /f > tree.txt
+# to this ↓
 from pathlib import Path
 
 
@@ -7,13 +9,18 @@ def write_directory_structure(base_path, file, prefix=""):
     total_items = len(items)
 
     for index, item in enumerate(items):
-        connector = "├── " if index < total_items - 1 else "└── "
-        file.write(f"{prefix}{connector}{item.name}{'/' if item.is_dir() else ''}\n")
+        try:
+            connector = "├── " if index < total_items - 1 else "└── "
+            file.write(
+                f"{prefix}{connector}{item.name}{'/' if item.is_dir() else ''}\n"
+            )
 
-        if item.is_dir():
-            # Create a new prefix for the next level
-            new_prefix = prefix + ("│   " if index < total_items - 1 else "    ")
-            write_directory_structure(item, file, new_prefix)
+            if item.is_dir():
+                # Create a new prefix for the next level
+                new_prefix = prefix + ("│   " if index < total_items - 1 else "    ")
+                write_directory_structure(item, file, new_prefix)
+        except Exception:  # skip system files
+            continue
 
 
 def main():
@@ -24,8 +31,8 @@ def main():
     try:
         with open(output_file_path, "w", encoding="UTF-8") as file:
             write_directory_structure(current_directory, file)
-    except IOError:
-        pass
+    except Exception as e:
+        print(e)
 
 
 if __name__ == "__main__":
