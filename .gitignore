@@ -1,0 +1,6 @@
+# environment
+.venv
+
+# private
+scratch
+stuff
