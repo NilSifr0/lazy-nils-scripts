@@ -1,34 +1,31 @@
-"""
-This script finds all sub dir and files under the current directory, extracts their name, and appends them in a text file. The initial idea for creating this is to create a tree like documentation of file and folder structures.
-"""
-
+# creates a file structure of children from current directory
 from pathlib import Path
 
 
-def crawl_directory():
-    current_directory = Path(".")
+def write_directory_structure(base_path, file, prefix=""):
+    items = list(base_path.iterdir())
+    total_items = len(items)
 
-    for item in current_directory.iterdir():
-        try:
-            if item.is_dir():
-                with open("dir_tree.txt", "a+", encoding="UTF-8") as file:
-                    file.write(f"{item.name}")
-            elif item.is_file():
-                with open("dir_tree.txt", "a+", encoding="UTF-8") as file:
-                    file.write(f"{item.name}")
+    for index, item in enumerate(items):
+        connector = "├── " if index < total_items - 1 else "└── "
+        file.write(f"{prefix}{connector}{item.name}{'/' if item.is_dir() else ''}\n")
 
-        except FileExistsError:
-            print("file exists")
-
-        else:
-            print("op successful")
-
-        finally:
-            print("script terminated")
+        if item.is_dir():
+            # Create a new prefix for the next level
+            new_prefix = prefix + ("│   " if index < total_items - 1 else "    ")
+            write_directory_structure(item, file, new_prefix)
 
 
 def main():
-    pass
+    # current_directory = Path(__file__) # use this to run script on where the file currently is
+    current_directory = Path.home() / "Documents"  # Test directory
+    output_file_path = f"{current_directory.name}_fs.txt"
+
+    try:
+        with open(output_file_path, "w", encoding="UTF-8") as file:
+            write_directory_structure(current_directory, file)
+    except IOError:
+        pass
 
 
 if __name__ == "__main__":

@@ -1,3 +1,4 @@
+# creates a file with a million random characters
 import secrets
 import string
 
